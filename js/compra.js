@@ -43,23 +43,21 @@ function validarPrompt(msgPrimerIntento, msgError, condicion) {
 
 //Runtime
 //Puede llegar a pasar que las alerts corran antes de que se vean los precios. Con eventos dejaria de usar alerts y no me tendria que preocupar.
-window.onload = () => {
-    let total = 0;
-    let wOg = true;
-    piedras.forEach(el => {
-        const msgP = `Cuantas "piedra ${el.nombre}" quiere comprar?`;
-        const msgE = `Ingreso un valor invalido. Cuantas "piedra ${el.nombre}" quiere comprar?`;
-        const cant = parseInt(validarPrompt(msgP, msgE, (cnt) => (parseInt(cnt) >= 0)));
-        total += cant * el.precio;
-        if (cant > 0) {
-            let nuevo = document.createElement("li");
-            const color = colores[Math.round(Math.random() * (colores.length - 1))];
-            const bg = wOg ? "white-bg" : "lightgray-bg";
-            wOg = !wOg;
-            nuevo.classList.add(bg);
-            nuevo.innerHTML = `Piedra <span class="${color}">${el.nombre}</span><br>${cant} por $${el.precio * cant}`;
-            resumenList.appendChild(nuevo);
-        }
-        totalCompra.innerHTML = `$${total}`;
-    });
-}
+let total = 0;
+let wOg = true;
+piedras.forEach(el => {
+    const msgP = `Cuantas "piedra ${el.nombre}" quiere comprar?`;
+    const msgE = `Ingreso un valor invalido. Cuantas "piedra ${el.nombre}" quiere comprar?`;
+    const cant = parseInt(validarPrompt(msgP, msgE, (cnt) => (parseInt(cnt) >= 0)));
+    total += cant * el.precio;
+    if (cant > 0) {
+        let nuevo = document.createElement("li");
+        const color = colores[Math.round(Math.random() * (colores.length - 1))];
+        const bg = wOg ? "white-bg" : "lightgray-bg";
+        wOg = !wOg;
+        nuevo.classList.add(bg);
+        nuevo.innerHTML = `Piedra <span class="${color}">${el.nombre}</span><br>${cant} por $${el.precio * cant}`;
+        resumenList.appendChild(nuevo);
+    }
+    totalCompra.innerHTML = `$${total}`;
+});
