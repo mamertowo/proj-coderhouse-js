@@ -1,0 +1,77 @@
+.crimson {
+  color: crimson; }
+
+.royalblue {
+  color: royalblue; }
+
+.blueviolet {
+  color: blueviolet; }
+
+.deeppink {
+  color: deeppink; }
+
+.limegreen {
+  color: limegreen; }
+
+.red {
+  color: red; }
+
+.white-bg {
+  background-color: white; }
+
+.lightgray-bg {
+  background-color: lightgray; }
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box; }
+
+body {
+  background-color: black;
+  background-image: url(../media/img/test6.webp);
+  font-family: sans-serif;
+  color: white; }
+
+.indexHeader {
+  padding: 3% 5%; }
+  .indexHeader h1 {
+    font-size: 10em; }
+  .indexHeader h2 {
+    font-size: 3em; }
+
+.indexMain {
+  padding: 0 5%;
+  font-size: 3em; }
+  .indexMain a {
+    text-decoration: none;
+    color: white; }
+
+.compraHeader {
+  text-align: center;
+  font-size: 2em; }
+
+.compraMain h2 {
+  font-size: 4em;
+  text-align: center;
+  margin: 50px; }
+
+.compraMain .container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  text-align: center; }
+  .compraMain .container h2 {
+    margin: 25px;
+    font-size: 3em; }
+  .compraMain .container div {
+    margin: 0 10%; }
+    .compraMain .container div ul {
+      background-color: white;
+      color: black;
+      border-radius: 30px;
+      list-style: none;
+      font-size: 2em; }
+      .compraMain .container div ul :first-child {
+        border-radius: 30px 30px 0 0; }
+      .compraMain .container div ul :last-child {
+        border-radius: 0 0 30px 30px; }

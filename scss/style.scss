@@ -1,0 +1,71 @@
+@import "colors";
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: black;
+    background-image: url(../media/img/test6.webp);
+    font-family: sans-serif;
+    color: white;
+}
+
+.indexHeader {
+    padding: 3% 5%;
+    h1 {
+        font-size: 10em;
+    }
+    h2 {
+        font-size: 3em;
+    }
+}
+
+.indexMain {
+    padding: 0 5%;
+    font-size: 3em;
+    a {
+        text-decoration: none;
+        color: white;
+    }
+}
+
+.compraHeader {
+    text-align: center;
+    font-size: 2em;
+}
+
+.compraMain {
+    h2 {
+        font-size: 4em;
+        text-align: center;
+        margin: 50px;
+    }
+    .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        text-align: center;
+        h2 {
+            margin: 25px;
+            font-size: 3em;
+        }
+        div {
+            margin: 0 10%;
+            ul {
+                background-color: white;
+                color: black;
+                border-radius: 30px;
+                list-style: none;
+                font-size: 2em;
+                :first-child {
+                    border-radius: 30px 30px 0 0;
+                }
+                :last-child {
+                    border-radius: 0 0 30px 30px;
+                }
+            }
+        }
+    }
+}
