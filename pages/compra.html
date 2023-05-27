@@ -9,21 +9,33 @@
 </head>
 <body>
     <header class="compraHeader">
-        <h1>Elegí tus <em>PIEDRAS</em></h1>
+        <form id="searchForm">
+            <input type="text" name="searchBar" placeholder="Busca tus PIEDRAS" class="searchBar">
+            <input type="submit" value="Buscar" class="searchBtn">
+        </form>
+        <button id="carritoOpen" type="button">Carrito</button>
     </header>
     <main class="compraMain">
-        <div class="container">
-            <div class="precios">
-                <h2>Precios</h2>
-                <ul id="preciosList"></ul>
-            </div>
-            <div class="resumen">
-                <h2>Resumen</h2>
-                <ul id="resumenList"></ul>
-            </div>
-        </div>
-        <h2>Total: <span id="totalCompra" class="red"></span></h2>
+        <aside class="categorias">
+            <h2>Categorías</h2>
+            <ul id="categoriasActivas"></ul>
+            <ul id="categoriasNoActivas"></ul>
+        </aside>
+        <ul class="piedras" id="displayPiedras"></ul>
     </main>
+    <div id="carritoContainer" class="carritoContainer hide">
+        <div class="carritoElem">
+            <h2>Carrito</h2>
+            <button class="cerrar" id="carritoClose">X</button>
+            <ul id="carritoElem"></ul>
+            <p>Total: <span id="totalCarrito"></span></p>
+            <button class="comprarBtn" id="comprarBtn">Comprar</button>
+            <button class="vaciarBtn" id="vaciarBtn">Vaciar</button>
+            <p id="graciasMsg" class="gracias hide">Gracias por su compra!</p>
+        </div>
+    </div>
+    <script src="../js/stock.js"></script>
+    <script src="../js/util.js"></script>
     <script src="../js/compra.js"></script>
 </body>
 </html>
