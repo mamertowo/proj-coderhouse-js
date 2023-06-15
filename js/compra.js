@@ -21,16 +21,15 @@ carritoOpen.addEventListener('click', event => {
 const carritoClose = document.getElementById("carritoClose");
 carritoClose.addEventListener('click', event => {
     carritoContainer.classList.add("hide");
-    const graciasMsg = document.getElementById("graciasMsg");
-    graciasMsg.classList.add("hide");
 });
 const vaciarBtn = document.getElementById("vaciarBtn");
 const comprarBtn = document.getElementById("comprarBtn");
 
-function Compra(nombre, cantidad, precio) {
+function Compra(nombre, cantidad, precio, id) {
     this.nombre = nombre;
     this.cantidad = cantidad;
     this.precio = precio;
+    this.id = id;
 }
 
 function updateCarrito() {
@@ -54,25 +53,66 @@ function vaciarCarrito() {
 vaciarBtn.addEventListener('click', vaciarCarrito);
 
 comprarBtn.addEventListener('click', event => {
-    const graciasMsg = document.getElementById("graciasMsg");
-    const sts = JSON.parse(localStorage.getItem('stocks'));
-    graciasMsg.classList.remove("hide");
-    carrito.forEach(c => {
-        const s = sts.find(e => e.nombre == c.nombre);
-        s.stock -= c.cantidad;
+    Swal.fire({
+        title: 'Confirmar compra?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Confirmar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            procesarCompra(carrito).then((res) => {
+                if (res) {
+                    vaciarCarrito();
+                    updatePiedras();
+                    Swal.fire('Gracias por su compra!', '', 'success');
+                } else {
+                    vaciarCarrito();
+                    Swal.fire('Hubo un error al realizar su compra', 'Vuelva a intentarlo mas tarde', 'error');
+                }
+            });
+        }
     });
-    localStorage.setItem('stocks', JSON.stringify(sts));
-    vaciarCarrito();
-    updatePiedras();
 });
+
+//Como la funcion es async, funciona como promise
+async function procesarCompra(cart) {
+    for (const c of cart) {
+        const st = await fetch(`https://648a2b645fa58521cab0f453.mockapi.io/pcjs/piedras/${c.id}`)
+        .then(resp => resp.json()).then(data => data.stock);
+        if (c.cantidad > st) {
+            return false;
+        }
+    }
+    //Lo hago en dos loops separados para que solo se realice la compra entera y no un pedazo
+    for (const c of cart) {
+        const st = await fetch(`https://648a2b645fa58521cab0f453.mockapi.io/pcjs/piedras/${c.id}`)
+        .then(resp => resp.json()).then(data => data.stock);
+        await fetch(`https://648a2b645fa58521cab0f453.mockapi.io/pcjs/piedras/${c.id}`, {
+            method: 'PUT',
+            headers: {'content-type':'application/json'},
+            body: JSON.stringify({
+                stock: st - c.cantidad
+            })
+        });
+    }
+    return true;
+}
 
 //Config categorias ----------------------------------------------------------------------
 const categoriasNoActivas = document.getElementById("categoriasNoActivas");
 const categoriasActivas = document.getElementById("categoriasActivas");
-const categoriasOff = stock.categorias.map(c => firstUp(c));
+let categoriasOff = [];
 const categoriasOn = [];
 
-function startCats() {
+async function startCats() {
+    categoriasOff = await fetch("https://648a2b645fa58521cab0f453.mockapi.io/pcjs/categorias").then((resp) => resp.json()).then((data) => {
+        const res = [];
+        data.forEach(el => {
+            res.push(firstUp(el.categoria));
+        });
+        return res;
+    });
     categoriasOff.sort();   //Por defecto orden alfabetico asique no me ocupo.
     categoriasOff.forEach((cat) => {
         const nuevoLi = document.createElement("li");
@@ -124,20 +164,7 @@ function toggleCat(ev, listaAgregar, listaBorrar, seccionAgregar, seccionBorrar)
 
 //Config display de piedras a vender ------------------------------------------------------------------
 const displayPiedras = document.getElementById("displayPiedras");
-const listaPiedras = stock.piedras;
-//Si no hay stocks guardados, guardo los que vienen por defecto en stock.js
-if (!localStorage.getItem('stocks')) {
-    const sts = [];
-    function Stock(nombre, st) {
-        this.nombre = nombre;
-        this.stock = st;
-    }
-    listaPiedras.forEach(p => {
-        sts.push(new Stock(p.nombre, p.stock));
-    });
-    console.log(JSON.stringify(sts));
-    localStorage.setItem('stocks', JSON.stringify(sts));
-}
+let listaPiedras = [];
 
 function cumpleBusqueda(nombre, categorias) {
     const nom = `Piedra ${nombre}`.toLowerCase();
@@ -149,16 +176,16 @@ function cumpleBusqueda(nombre, categorias) {
 }
 
 //Aca no me voy a ocupar de que todo este ordenado alfabeticamente.
-function updatePiedras() {
-    //Arreglo las mayus de las categorias y agarro los stocks guardados.
+async function updatePiedras() {
+    listaPiedras = await fetch("https://648a2b645fa58521cab0f453.mockapi.io/pcjs/piedras").then((resp) => resp.json());
+    //Arreglo las mayus de las categorias.
     //Lo hago adentro de updatePiedras() para que se actualicen los stocks justo despues de una compra.
     listaPiedras.forEach(p => {
         p.categorias = p.categorias.map(c => firstUp(c));
-        p.stock = JSON.parse(localStorage.getItem('stocks')).find(e => e.nombre === p.nombre).stock;
     });
     displayPiedras.innerHTML = "";
     listaPiedras.forEach(piedra => {
-        const {nombre, precio, stock, categorias, img} = piedra;
+        const {nombre, precio, stock, categorias, img, id} = piedra;
         //Podria filtrar la lista de piedras primero en vez de usar este if pero me gusta mas esta solucion.
         if ((categoriasOn.length === 0 || contenida(categoriasOn, ...categorias)) && cumpleBusqueda(nombre, categorias) && stock > 0) {
             p = nuevaPiedra(nombre, precio, stock, categorias, img);
@@ -177,9 +204,17 @@ function updatePiedras() {
             });
             agregarBtn.addEventListener('click', event => {
                 //Sorprendente que esto funcione sin tener que hacer ninguna pirueta rara
-                carrito.push(new Compra(nombre, parseInt(cant.value), precio * parseInt(cant.value)));
+                carrito.push(new Compra(nombre, parseInt(cant.value), precio * parseInt(cant.value), id));
                 localStorage.setItem("carrito", JSON.stringify(carrito));
                 updateCarrito();
+                Toastify({
+                    text: "Item agregado",
+                    duration: 2000,
+                    close: true,
+                    offset: {
+                        y: '2em'
+                    }
+                }).showToast();
             });
             displayPiedras.appendChild(p);
         }

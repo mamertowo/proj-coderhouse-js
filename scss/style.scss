@@ -198,13 +198,12 @@ body {
 .carritoElem {
     display: grid;
     grid-template-columns: 4fr 1fr;
-    grid-template-rows: 1fr auto 1fr 1fr auto;
+    grid-template-rows: 1fr auto 1fr 1fr;
     grid-template-areas: 
     "TIT CLS"
     "LIS LIS"
     "TOT TOT"
-    "COM EMT"
-    "THK THK";
+    "COM EMT";
     h2 {
         grid-area: TIT;
     }
@@ -227,12 +226,6 @@ body {
     }
     .vaciarBtn {
         grid-area: EMT;
-    }
-    .gracias {
-        grid-area: THK;
-        color: limegreen;
-        text-align: center;
-        font-size: 1.2em;
     }
 }
 
